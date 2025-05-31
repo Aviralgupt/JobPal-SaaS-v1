@@ -1,0 +1,1 @@
+# MongoDB user schema using pymongo
