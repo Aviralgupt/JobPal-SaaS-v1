@@ -13,40 +13,61 @@ def bulk_match_bullets_to_jd():
     if not bullets or not jd:
         return jsonify({"error": "Missing bullets or job description"}), 400
 
-    # Build single batch prompt
+    # Build optimized prompt for faster processing
     prompt = (
-        f"You are an expert resume writer. Below is a job description and multiple resume bullets.\n"
-        f"Rewrite each bullet to better match the job description. Return only one improved bullet for each input bullet.\n\n"
-        f"Job Description:\n{jd}\n\n"
-        f"Resume Bullets:\n"
+        f"Rewrite these resume bullets to match this job description. Return only the improved bullets, one per line:\n\n"
+        f"Job: {jd}\n\n"
+        f"Bullets:\n"
     )
 
     for idx, bullet in enumerate(bullets, 1):
         prompt += f"{idx}. {bullet}\n"
 
-    prompt += "\nReturn the results as:\n1. Improved bullet 1\n2. Improved bullet 2\n..."
+    prompt += "\nImproved bullets:"
 
-    # Send request to Ollama
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={"model": "mistral", "prompt": prompt},
-        timeout=60,
-        stream=True  # ✅ important: handle streaming
-    )
+    try:
+        # Use the faster phi3:mini model with optimized parameters
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "phi3:mini",  # Faster, smaller model
+                "prompt": prompt,
+                "stream": False,  # Disable streaming for faster response
+                "options": {
+                    "temperature": 0.7,  # Slightly creative but focused
+                    "top_p": 0.9,  # Focus on most likely tokens
+                    "num_predict": 200  # Limit response length for speed
+                }
+            },
+            timeout=30  # Reduced timeout for faster feedback
+        )
+        response.raise_for_status()
 
-    response.raise_for_status()
+        # Get the response directly (no streaming)
+        data = response.json()
+        full_output = data.get("response", "").strip()
 
-    # Handle streamed response correctly:
-    full_output = ""
-    for line in response.iter_lines():
-        if line:
-            obj = json.loads(line.decode('utf-8'))
-            full_output += obj.get("response", "")
+        # Parse response into list
+        lines = full_output.split('\n')
+        improved_bullets = []
+        
+        for line in lines:
+            line = line.strip()
+            if line and not line.startswith('Improved bullets:'):
+                # Remove numbering if present
+                if line[0].isdigit() and '. ' in line:
+                    line = line.split('. ', 1)[1]
+                improved_bullets.append(line)
 
-    full_output = full_output.strip()
+        # If parsing failed, return the raw output
+        if not improved_bullets:
+            improved_bullets = [full_output]
 
-    # Parse response into list
-    lines = full_output.split('\n')
-    improved_bullets = [line.partition('. ')[2].strip() for line in lines if line.strip()]
+        return jsonify({"improved_bullets": improved_bullets})
 
-    return jsonify({"improved_bullets": improved_bullets})
+    except requests.exceptions.Timeout:
+        return jsonify({"error": "AI model is taking too long. Try using a shorter job description or fewer bullets."}), 408
+    except requests.exceptions.ConnectionError:
+        return jsonify({"error": "Cannot connect to AI model. Make sure Ollama is running with 'ollama serve'."}), 503
+    except Exception as e:
+        return jsonify({"error": f"Error processing request: {str(e)}"}), 500
