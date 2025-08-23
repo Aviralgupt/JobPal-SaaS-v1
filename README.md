@@ -1,7 +1,7 @@
 # 🚀 JobPal - AI Resume Bullet Optimizer
 
 > Built by Aviral Gupta  
-> Connect with me: [LinkedIn](https://www.linkedin.com/in/your-profile-url)
+> Connect with me: [LinkedIn](https://www.linkedin.com/in/aviral-gupt/)
 
 ---
 
