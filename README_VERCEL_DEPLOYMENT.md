@@ -59,7 +59,7 @@ node switch-to-vercel.js
    ```bash
    vercel env add GOOGLE_API_KEY
    ```
-   When prompted, enter: `AIzaSyDYgLUYtQj8xPG0B-qRJu4wwILm9QKBOWI`
+   When prompted, enter your Google Gemini API key
 
 5. Deploy to production:
    ```bash
@@ -73,7 +73,7 @@ node switch-to-vercel.js
 3. Click "New Project"
 4. Import your repository
 5. Configure environment variables:
-   - `GOOGLE_API_KEY`: `AIzaSyDYgLUYtQj8xPG0B-qRJu4wwILm9QKBOWI`
+   - `GOOGLE_API_KEY`: Your Google Gemini API key
 6. Deploy!
 
 ## 🧪 Testing the Deployment
