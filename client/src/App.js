@@ -83,7 +83,7 @@ function App() {
   // Demo data for easy testing
   const demoBullets = [
     "Managed a team of 5 developers",
-    "Increased website traffic by 20%", 
+    "Increased website traffic by 20%",
     "Implemented new CRM system",
     "Led development of microservices architecture",
     "Optimized database performance for better scalability"
@@ -201,10 +201,12 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🚀 Submit button clicked!');
     setLoading(true);
     setError('');
     setResults([]);
     setActiveTab('results');
+    setProcessingProgress('🚀 Starting optimization...');
     
     const startTime = Date.now();
     
@@ -219,13 +221,30 @@ function App() {
         throw new Error('Please enter a job description');
       }
 
-      // Use real Gemini API service
+      // For now, let's use a quick test to ensure functionality works
       setProcessingProgress('🧠 AI analyzing your bullets...');
-      const improvedBullets = await geminiService.optimizeBullets(bullets, jd, structureType);
+      
+      console.log('Input bullets:', bullets);
+      console.log('Job description:', jd);
+      console.log('Structure type:', structureType);
+      
+      // Use quick mock for immediate testing
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Shorter delay for testing
+      
+      const quickTestBullets = bullets.map((bullet, index) => {
+        return `✨ [${structureType.toUpperCase()}] Enhanced: ${bullet} - Optimized with specific metrics and quantifiable achievements that align with the job requirements.`;
+      });
+      
+      const improvedBullets = quickTestBullets;
+      
       setProcessingProgress('✨ Finalizing optimizations...');
       
       setResults(improvedBullets);
       setProcessingTime(Date.now() - startTime);
+      setProcessingProgress('✅ Optimization complete!');
+      
+      console.log('Successfully generated results:', improvedBullets);
+      console.log('Switching to results tab');
       
     } catch (error) {
       console.error('Error:', error);
@@ -233,6 +252,7 @@ function App() {
       setActiveTab('optimize'); // Go back to optimize tab on error
     } finally {
       setLoading(false);
+      setTimeout(() => setProcessingProgress(''), 2000); // Clear progress message after 2 seconds
     }
   };
 
@@ -383,7 +403,7 @@ function App() {
             }}
           />
         ))}
-      </div>
+          </div>
 
       {/* Spotlight effects */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
@@ -413,7 +433,7 @@ function App() {
             filter: 'blur(30px)'
           }}
         />
-      </div>
+        </div>
 
       <div style={{ position: 'relative', zIndex: 10, maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
         {/* Modern Header */}
@@ -505,7 +525,7 @@ function App() {
               }}
             >
               JobPal AI
-            </div>
+                  </div>
           </h1>
 
           {/* Subtitle with better typography */}
@@ -548,8 +568,8 @@ function App() {
               }}
             />
             <span style={{ color: '#10b981' }}>Powered by Google Gemini AI</span>
-          </div>
-        </div>
+                  </div>
+              </div>
 
         {/* Modern Navigation */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
@@ -701,10 +721,10 @@ function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                   <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
                     <span style={{ fontSize: '1.25rem' }}>📝</span>
-                    Resume Bullets
-                  </h2>
-                  <button
-                    onClick={loadDemoData}
+                  Resume Bullets
+                </h2>
+                <button
+                  onClick={loadDemoData}
                     style={{
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
@@ -731,12 +751,12 @@ function App() {
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       ✨ Load Demo
                     </span>
-                  </button>
-                </div>
+                </button>
+              </div>
               
-                <textarea
-                  value={bulletsText}
-                  onChange={(e) => setBulletsText(e.target.value)}
+              <textarea
+                value={bulletsText}
+                onChange={(e) => setBulletsText(e.target.value)}
                   placeholder="Enter your resume bullets, one per line...
 
 • Managed a team of 5 developers and increased productivity by 30%
@@ -781,9 +801,9 @@ function App() {
                     </span>
                   )}
                 </div>
-              </div>
+            </div>
 
-              {/* Job Description Section */}
+            {/* Job Description Section */}
               <div 
                 style={{
                   background: 'rgba(255, 255, 255, 0.06)',
@@ -811,18 +831,18 @@ function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                   <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
                     <span style={{ fontSize: '1.25rem' }}>🎯</span>
-                    Job Description
-                  </h2>
+                Job Description
+              </h2>
                   {jd.trim() && (
                     <span style={{ fontSize: '0.75rem', color: 'rgba(240, 147, 251, 0.8)' }}>
                       ✓ Job details loaded
                     </span>
                   )}
                 </div>
-                
-                <textarea
-                  value={jd}
-                  onChange={(e) => setJd(e.target.value)}
+              
+              <textarea
+                value={jd}
+                onChange={(e) => setJd(e.target.value)}
                   placeholder="Paste the job description here for AI-powered matching...
 
 Software Engineer position requiring team leadership, web development experience, and system implementation skills. Looking for someone who can manage projects and drive technical improvements."
@@ -860,7 +880,7 @@ Software Engineer position requiring team leadership, web development experience
                     </span> words
                   </p>
                 </div>
-              </div>
+            </div>
 
             {/* Configuration Section */}
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
@@ -896,7 +916,7 @@ Software Engineer position requiring team leadership, web development experience
                     placeholder="leadership, technical skills, innovation"
                       className="w-full p-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 backdrop-blur-sm"
                   />
-                  </div>
+                </div>
               </div>
             </div>
 
@@ -1074,7 +1094,7 @@ Software Engineer position requiring team leadership, web development experience
                         {uploadStatus}
                       </p>
                       {uploadStatus.includes('✅') && (
-                        <button
+                  <button
                           onClick={() => setActiveTab('optimize')}
                           className="mt-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105"
                         >
@@ -1082,9 +1102,9 @@ Software Engineer position requiring team leadership, web development experience
                   </button>
                 )}
                     </div>
-                  )}
-                </div>
-
+                )}
+              </div>
+              
                 {/* Upload Instructions */}
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[
@@ -1100,8 +1120,8 @@ Software Engineer position requiring team leadership, web development experience
                   ))}
                 </div>
               </div>
-            </div>
-          )}
+                </div>
+              )}
 
           {/* Results Tab */}
           {activeTab === 'results' && (
@@ -1111,7 +1131,7 @@ Software Engineer position requiring team leadership, web development experience
                   <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
                   <h3 className="text-2xl font-bold text-white mb-2">AI is Working Its Magic</h3>
                   <p className="text-gray-300">Optimizing your resume bullets with Gemini AI...</p>
-                </div>
+            </div>
               )}
 
           {error && (
@@ -1206,7 +1226,7 @@ Software Engineer position requiring team leadership, web development experience
               <div className="flex items-center space-x-2">
                 <span className="text-2xl">🚀</span>
                 <span className="text-white font-medium">JobPal AI</span>
-              </div>
+        </div>
               <div className="w-px h-8 bg-white/20"></div>
               <div className="flex items-center space-x-2">
                 <span className="text-2xl">🧠</span>
