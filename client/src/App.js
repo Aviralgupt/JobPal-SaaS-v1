@@ -266,202 +266,335 @@ function App() {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom right, #0f172a, #581c87, #0f172a)',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        background: '#0a0a0f',
+        position: 'relative',
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        color: '#ffffff'
       }}
     >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -inset-10 opacity-50">
-          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-          <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-2000"></div>
-        </div>
+      {/* Modern mesh gradient background */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%),
+            linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)
+          `,
+          zIndex: 1
+        }}
+      />
+
+      {/* Floating particles */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
+        {[...Array(50)].map((_, i) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              width: Math.random() * 4 + 1 + 'px',
+              height: Math.random() * 4 + 1 + 'px',
+              backgroundColor: `hsl(${Math.random() * 60 + 200}, 70%, 70%)`,
+              borderRadius: '50%',
+              left: Math.random() * 100 + '%',
+              top: Math.random() * 100 + '%',
+              animation: `float ${Math.random() * 3 + 2}s ease-in-out infinite`,
+              animationDelay: Math.random() * 2 + 's',
+              opacity: Math.random() * 0.7 + 0.3
+            }}
+          />
+        ))}
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-12" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <div style={{ position: 'relative', zIndex: 10, maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
+        {/* Modern Header */}
+        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          {/* Logo with modern design */}
           <div 
-            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '5rem',
-              height: '5rem',
-              background: 'linear-gradient(to right, #8b5cf6, #ec4899)',
-              borderRadius: '50%',
-              marginBottom: '1.5rem',
-              boxShadow: '0 20px 25px -5px rgba(139, 92, 246, 0.3)',
-              animation: 'float 3s ease-in-out infinite'
+              width: '80px',
+              height: '80px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '24px',
+              marginBottom: '2rem',
+              boxShadow: '0 20px 40px rgba(102, 126, 234, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+              animation: 'float 4s ease-in-out infinite',
+              position: 'relative'
             }}
           >
-            <span style={{ fontSize: '2rem' }}>🚀</span>
+            <div 
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%)',
+                borderRadius: '24px'
+              }}
+            />
+            <span style={{ fontSize: '2.5rem', position: 'relative', zIndex: 1 }}>⚡</span>
           </div>
+
+          {/* Main title with enhanced styling */}
           <h1 
-            className="text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4"
             style={{
-              fontSize: '3rem',
-              fontWeight: 'bold',
-              background: 'linear-gradient(to right, #ffffff, #d1d5db)',
+              fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
+              fontWeight: '800',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              marginBottom: '1rem',
-              lineHeight: '1.2'
+              backgroundClip: 'text',
+              marginBottom: '1.5rem',
+              lineHeight: '1.1',
+              letterSpacing: '-0.02em'
             }}
           >
             JobPal AI
           </h1>
+
+          {/* Subtitle with better typography */}
           <p 
-            className="text-xl text-gray-300 mb-6 max-w-2xl mx-auto"
             style={{
               fontSize: '1.25rem',
-              color: '#d1d5db',
-              marginBottom: '1.5rem',
-              maxWidth: '42rem',
-              margin: '0 auto 1.5rem auto',
-              lineHeight: '1.6'
+              color: 'rgba(255, 255, 255, 0.8)',
+              marginBottom: '2rem',
+              maxWidth: '600px',
+              margin: '0 auto 2rem auto',
+              lineHeight: '1.6',
+              fontWeight: '400'
             }}
           >
-            Transform your resume bullets with AI-powered optimization. Stand out with STAR, XYZ formats, and intelligent matching.
+            Transform your resume with AI-powered optimization. Create compelling bullets that get you hired.
           </p>
+
+          {/* Status badge with modern design */}
           <div 
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-6 py-3"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              background: 'rgba(34, 197, 94, 0.2)',
-              backdropFilter: 'blur(4px)',
-              border: '1px solid rgba(74, 222, 128, 0.3)',
-              borderRadius: '9999px',
-              padding: '0.75rem 1.5rem'
+              gap: '0.75rem',
+              background: 'rgba(16, 185, 129, 0.15)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '50px',
+              padding: '0.75rem 1.5rem',
+              fontSize: '0.9rem',
+              fontWeight: '500'
             }}
           >
             <div 
-              className="w-2 h-2 bg-green-400 rounded-full animate-ping"
               style={{
-                width: '0.5rem',
-                height: '0.5rem',
-                backgroundColor: '#4ade80',
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#10b981',
                 borderRadius: '50%',
-                animation: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite'
+                animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite'
               }}
-            ></div>
-            <span 
-              className="text-green-400 font-medium"
-              style={{
-                color: '#4ade80',
-                fontWeight: '500'
-              }}
-            >
-              Powered by Google Gemini AI
-            </span>
+            />
+            <span style={{ color: '#10b981' }}>Powered by Google Gemini AI</span>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex justify-center mb-8 px-4">
+        {/* Modern Navigation */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
           <div 
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20 w-full max-w-md"
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(12px)',
-              borderRadius: '1rem',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              padding: '0.25rem'
+              display: 'flex',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              gap: '4px'
             }}
           >
-            <div className="grid grid-cols-3 gap-1">
-              {[
-                { id: 'optimize', label: 'Optimize', icon: '⚡' },
-                { id: 'upload', label: 'Upload', icon: '📄' },
-                { id: 'results', label: 'Results', icon: '✨' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-3 py-3 rounded-xl font-medium transition-all duration-300 text-center ${
-                    activeTab === tab.id
-                      ? 'bg-white text-purple-900 shadow-lg transform scale-105'
-                      : 'text-white/70 hover:text-white hover:bg-white/5'
-                  }`}
-                  style={{
-                    padding: '0.75rem',
-                    borderRadius: '0.75rem',
-                    fontWeight: '500',
-                    transition: 'all 0.3s ease',
-                    textAlign: 'center',
-                    backgroundColor: activeTab === tab.id ? 'white' : 'transparent',
-                    color: activeTab === tab.id ? '#581c87' : 'rgba(255, 255, 255, 0.7)',
-                    transform: activeTab === tab.id ? 'scale(1.05)' : 'scale(1)',
-                    boxShadow: activeTab === tab.id ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none'
-                  }}
-                >
-                  <div className="flex flex-col items-center space-y-1">
-                    <span className="text-lg">{tab.icon}</span>
-                    <span className="text-xs font-medium">{tab.label}</span>
-                  </div>
-                </button>
-              ))}
-              </div>
+            {[
+              { id: 'optimize', label: 'Optimize', icon: '⚡', color: '#667eea' },
+              { id: 'upload', label: 'Upload', icon: '📤', color: '#f093fb' },
+              { id: 'results', label: 'Results', icon: '✨', color: '#4ecdc4' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  position: 'relative',
+                  padding: '12px 24px',
+                  borderRadius: '16px',
+                  border: 'none',
+                  background: activeTab === tab.id 
+                    ? `linear-gradient(135deg, ${tab.color}22, ${tab.color}44)` 
+                    : 'transparent',
+                  color: activeTab === tab.id ? '#ffffff' : 'rgba(255, 255, 255, 0.6)',
+                  fontWeight: activeTab === tab.id ? '600' : '500',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transform: activeTab === tab.id ? 'translateY(-1px)' : 'translateY(0)',
+                  boxShadow: activeTab === tab.id 
+                    ? `0 8px 25px ${tab.color}33, inset 0 1px 0 rgba(255, 255, 255, 0.1)` 
+                    : 'none',
+                  minWidth: '90px'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab !== tab.id) {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                    e.target.style.color = 'rgba(255, 255, 255, 0.8)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTab !== tab.id) {
+                    e.target.style.background = 'transparent';
+                    e.target.style.color = 'rgba(255, 255, 255, 0.6)';
+                  }
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ fontSize: '16px' }}>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                </div>
+                {activeTab === tab.id && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      bottom: '-6px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '6px',
+                      height: '6px',
+                      background: tab.color,
+                      borderRadius: '50%',
+                      boxShadow: `0 0 12px ${tab.color}`
+                    }}
+                  />
+                )}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Tab Content */}
-        <div className="max-w-4xl mx-auto">
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           {/* Optimize Tab */}
           {activeTab === 'optimize' && (
-            <div className="space-y-6 md:space-y-8 animate-fadeIn px-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animation: 'fadeIn 0.6s ease-out' }}>
               {/* Resume Bullets Section */}
               <div 
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/20"
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(12px)',
-                  borderRadius: '1rem',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   padding: '2rem',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
               >
-                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                  <h2 className="text-xl md:text-2xl font-bold text-white flex items-center">
-                    <span className="mr-3">📝</span>
+                {/* Card glow effect */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '1px',
+                    background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent)'
+                  }}
+                />
+              
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
+                    <span style={{ fontSize: '1.25rem' }}>📝</span>
                     Resume Bullets
                   </h2>
                   <button
-                    type="button"
                     onClick={loadDemoData}
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-4 md:px-6 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg text-sm md:text-base"
+                    style={{
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '0.75rem 1.5rem',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                    }}
                   >
-                    ✨ Load Demo
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      ✨ Load Demo
+                    </span>
                   </button>
                 </div>
               
-              <textarea
-                value={bulletsText}
-                onChange={(e) => setBulletsText(e.target.value)}
-                  placeholder="Enter your resume bullets, one per line... 
+                <textarea
+                  value={bulletsText}
+                  onChange={(e) => setBulletsText(e.target.value)}
+                  placeholder="Enter your resume bullets, one per line...
 
-• Managed a team of 5 developers
-• Increased website traffic by 20%
-• Implemented new CRM system"
-                  className="w-full h-40 p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none backdrop-blur-sm transition-all duration-300"
+• Managed a team of 5 developers and increased productivity by 30%
+• Increased website traffic by 20% through SEO optimization
+• Implemented new CRM system reducing customer response time"
+                  style={{
+                    width: '100%',
+                    height: '160px',
+                    padding: '1.5rem',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    color: '#ffffff',
+                    fontSize: '16px',
+                    lineHeight: '1.6',
+                    resize: 'none',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                    fontFamily: 'inherit'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.06)';
+                    e.target.style.borderColor = 'rgba(102, 126, 234, 0.5)';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.03)';
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
                 
-                <div className="flex justify-between items-center mt-4">
-                  <p className="text-gray-300 text-sm">
-                    <span className="font-medium text-purple-400">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                  <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <span style={{ fontWeight: '600', color: '#667eea' }}>
                       {bulletsText.split('\n').filter(line => line.trim()).length}
                     </span> bullets entered
                   </p>
+                  {bulletsText.trim() && (
+                    <span style={{ fontSize: '0.75rem', color: 'rgba(16, 185, 129, 0.8)' }}>
+                      ✓ Ready to optimize
+                    </span>
+                  )}
                 </div>
-            </div>
+              </div>
 
             {/* Job Description Section */}
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
