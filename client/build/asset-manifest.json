@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/JobPal/static/css/main.41fd96f7.css",
-    "main.js": "/JobPal/static/js/main.6b32dfdb.js",
-    "static/js/584.0a154e33.chunk.js": "/JobPal/static/js/584.0a154e33.chunk.js",
-    "index.html": "/JobPal/index.html",
-    "main.41fd96f7.css.map": "/JobPal/static/css/main.41fd96f7.css.map",
-    "main.6b32dfdb.js.map": "/JobPal/static/js/main.6b32dfdb.js.map",
-    "584.0a154e33.chunk.js.map": "/JobPal/static/js/584.0a154e33.chunk.js.map"
+    "main.css": "/static/css/main.41fd96f7.css",
+    "main.js": "/static/js/main.b6c760c3.js",
+    "static/js/584.0a154e33.chunk.js": "/static/js/584.0a154e33.chunk.js",
+    "index.html": "/index.html",
+    "main.41fd96f7.css.map": "/static/css/main.41fd96f7.css.map",
+    "main.b6c760c3.js.map": "/static/js/main.b6c760c3.js.map",
+    "584.0a154e33.chunk.js.map": "/static/js/584.0a154e33.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.41fd96f7.css",
-    "static/js/main.6b32dfdb.js"
+    "static/js/main.b6c760c3.js"
   ]
 }
