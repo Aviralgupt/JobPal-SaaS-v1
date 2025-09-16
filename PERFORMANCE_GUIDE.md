@@ -132,3 +132,4 @@ ollama serve           # Restart service
 
 **Your JobPal app is now optimized for fast, impressive demos! 🚀⚡**
 
+
