@@ -21,17 +21,56 @@ function App() {
 
   // Mock Gemini API for demo purposes (since backend isn't working yet)
   const mockGeminiResponse = async (bullets, jobDescription, structureType) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simulate realistic API delay
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // Mock improved bullets based on structure type
-    const improvements = {
-      star: bullets.map(bullet => `Situation: In a dynamic work environment, Task: ${bullet.toLowerCase()}, Action: Implemented strategic solutions and methodologies, Result: Achieved measurable improvements in team productivity and project outcomes.`),
-      xyz: bullets.map(bullet => `Accomplished enhanced team performance by implementing ${bullet.toLowerCase()}, which resulted in 25% improvement in operational efficiency and stakeholder satisfaction.`),
-      standard: bullets.map(bullet => `Enhanced ${bullet.toLowerCase()} through strategic implementation of industry best practices and innovative solutions, leading to improved organizational outcomes.`)
+    // Enhanced mock improvements with realistic, professional bullet points
+    const bulletImprovements = {
+      "Managed a team of 5 developers": {
+        star: "Situation: In a fast-paced software development environment, Task: Led a cross-functional team of 5 developers, Action: Implemented agile methodologies and mentorship programs, Result: Increased team velocity by 40% and reduced project delivery time by 3 weeks.",
+        xyz: "Accomplished a 40% increase in development team productivity by leading 5 developers through agile implementation and strategic mentorship, resulting in 3-week faster project deliveries and improved code quality metrics.",
+        standard: "Led and mentored a team of 5 software developers, implementing agile practices and code review processes that improved team productivity by 40% and accelerated project delivery timelines."
+      },
+      "Increased website traffic by 20%": {
+        star: "Situation: Company website experiencing declining user engagement, Task: Optimize website performance and user experience, Action: Implemented SEO strategies, page speed optimization, and A/B testing, Result: Achieved 20% increase in organic traffic and 15% improvement in conversion rates.",
+        xyz: "Accomplished a 20% increase in website traffic by implementing comprehensive SEO optimization and performance enhancements, resulting in improved user engagement and higher conversion rates.",
+        standard: "Optimized website performance through SEO implementation, page speed improvements, and user experience enhancements, resulting in 20% traffic increase and improved search rankings."
+      },
+      "Implemented new CRM system": {
+        star: "Situation: Legacy CRM system causing data inefficiencies, Task: Research and implement modern CRM solution, Action: Led system migration, data integration, and team training initiatives, Result: Reduced customer response time by 50% and improved data accuracy by 85%.",
+        xyz: "Accomplished seamless CRM system implementation by leading migration strategy and team training, resulting in 50% faster customer response times and 85% improvement in data accuracy.",
+        standard: "Spearheaded implementation of new CRM system, managing data migration and team onboarding that resulted in 50% reduction in customer response time and enhanced data management capabilities."
+      },
+      "Led development of microservices architecture": {
+        star: "Situation: Monolithic application limiting scalability and deployment flexibility, Task: Design and implement microservices architecture, Action: Architected service decomposition strategy and containerization approach, Result: Improved system scalability by 300% and reduced deployment time from hours to minutes.",
+        xyz: "Accomplished transformation from monolithic to microservices architecture by designing scalable service decomposition strategy, resulting in 300% improved scalability and minute-level deployment capabilities.",
+        standard: "Architected and led implementation of microservices architecture, transforming monolithic application to improve system scalability by 300% and enable rapid deployment cycles."
+      },
+      "Optimized database performance for better scalability": {
+        star: "Situation: Database bottlenecks affecting application performance under high load, Task: Optimize database architecture and queries, Action: Implemented indexing strategies, query optimization, and caching solutions, Result: Reduced query response time by 75% and increased concurrent user capacity by 200%.",
+        xyz: "Accomplished 75% reduction in database query response time by implementing advanced indexing and caching strategies, resulting in 200% increase in concurrent user handling capacity.",
+        standard: "Enhanced database performance through strategic optimization of queries, indexing, and caching implementations, achieving 75% faster response times and improved scalability for high-traffic scenarios."
+      }
     };
     
-    return improvements[structureType] || bullets;
+    // Generate improved bullets
+    const improved = bullets.map(bullet => {
+      const cleanBullet = bullet.trim();
+      if (bulletImprovements[cleanBullet]) {
+        return bulletImprovements[cleanBullet][structureType];
+      }
+      
+      // Fallback for custom bullets
+      const fallbacks = {
+        star: `Situation: In a professional work environment, Task: ${cleanBullet.toLowerCase()}, Action: Implemented strategic solutions using industry best practices, Result: Achieved significant improvements in efficiency and organizational outcomes.`,
+        xyz: `Accomplished enhanced operational performance by ${cleanBullet.toLowerCase()}, resulting in measurable improvements and positive impact on business objectives.`,
+        standard: `Successfully ${cleanBullet.toLowerCase()} through strategic planning and execution, delivering improved results and contributing to organizational growth.`
+      };
+      
+      return fallbacks[structureType] || cleanBullet;
+    });
+    
+    return improved;
   };
 
   // Get the correct API base URL for Vercel deployment
@@ -43,11 +82,19 @@ function App() {
   // Demo data for easy testing
   const demoBullets = [
     "Managed a team of 5 developers",
-    "Increased website traffic by 20%",
-    "Implemented new CRM system"
+    "Increased website traffic by 20%", 
+    "Implemented new CRM system",
+    "Led development of microservices architecture",
+    "Optimized database performance for better scalability"
   ];
 
   const demoJD = "Software Engineer position requiring team leadership, web development experience, and system implementation skills. Looking for someone who can manage projects and drive technical improvements.";
+
+  // Load demo data on component mount for better UX
+  useEffect(() => {
+    setBulletsText(demoBullets.join('\n'));
+    setJd(demoJD);
+  }, []);
 
   const loadDemoData = () => {
     setBulletsText(demoBullets.join('\n'));
@@ -596,22 +643,84 @@ function App() {
                 </div>
               </div>
 
-            {/* Job Description Section */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <span className="mr-3">🎯</span>
-                Job Description
-              </h2>
-              
-              <textarea
-                value={jd}
-                onChange={(e) => setJd(e.target.value)}
-                  placeholder="Paste the job description here...
+              {/* Job Description Section */}
+              <div 
+                style={{
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  padding: '2rem',
+                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+              >
+                {/* Card glow effect */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '1px',
+                    background: 'linear-gradient(90deg, transparent, rgba(240, 147, 251, 0.5), transparent)'
+                  }}
+                />
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
+                    <span style={{ fontSize: '1.25rem' }}>🎯</span>
+                    Job Description
+                  </h2>
+                  {jd.trim() && (
+                    <span style={{ fontSize: '0.75rem', color: 'rgba(240, 147, 251, 0.8)' }}>
+                      ✓ Job details loaded
+                    </span>
+                  )}
+                </div>
+                
+                <textarea
+                  value={jd}
+                  onChange={(e) => setJd(e.target.value)}
+                  placeholder="Paste the job description here for AI-powered matching...
 
 Software Engineer position requiring team leadership, web development experience, and system implementation skills. Looking for someone who can manage projects and drive technical improvements."
-                  className="w-full h-40 p-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none backdrop-blur-sm transition-all duration-300"
-              />
-            </div>
+                  style={{
+                    width: '100%',
+                    height: '140px',
+                    padding: '1.5rem',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    color: '#ffffff',
+                    fontSize: '16px',
+                    lineHeight: '1.6',
+                    resize: 'none',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                    fontFamily: 'inherit'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.06)';
+                    e.target.style.borderColor = 'rgba(240, 147, 251, 0.5)';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(240, 147, 251, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.03)';
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                  <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <span style={{ fontWeight: '600', color: '#f093fb' }}>
+                      {jd.split(' ').filter(word => word.trim()).length}
+                    </span> words
+                  </p>
+                </div>
+              </div>
 
             {/* Configuration Section */}
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
@@ -658,30 +767,38 @@ Software Engineer position requiring team leadership, web development experience
                   disabled={loading || !bulletsText.trim() || !jd.trim()}
                   style={{
                     background: loading || !bulletsText.trim() || !jd.trim() 
-                      ? 'linear-gradient(to right, #6b7280, #6b7280)' 
-                      : 'linear-gradient(to right, #8b5cf6, #ec4899)',
+                      ? 'linear-gradient(135deg, #6b7280, #4b5563)' 
+                      : 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+                    backgroundSize: '300% 300%',
+                    animation: !loading && bulletsText.trim() && jd.trim() ? 'gradientShift 4s ease infinite' : 'none',
                     color: 'white',
-                    fontWeight: 'bold',
-                    padding: '1rem 3rem',
-                    borderRadius: '1rem',
+                    fontWeight: '700',
+                    padding: '1.25rem 3rem',
+                    borderRadius: '16px',
                     border: 'none',
                     fontSize: '1.125rem',
                     cursor: loading || !bulletsText.trim() || !jd.trim() ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.3s ease',
-                    transform: loading || !bulletsText.trim() || !jd.trim() ? 'scale(1)' : 'scale(1)',
-                    boxShadow: '0 25px 50px -12px rgba(139, 92, 246, 0.3)',
-                    minWidth: '250px',
-                    minHeight: '60px'
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: 'translateY(0)',
+                    boxShadow: loading || !bulletsText.trim() || !jd.trim() 
+                      ? '0 8px 25px rgba(107, 114, 128, 0.2)' 
+                      : '0 20px 40px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                    minWidth: '320px',
+                    minHeight: '64px',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
                     if (!loading && bulletsText.trim() && jd.trim()) {
-                      e.target.style.transform = 'scale(1.05)';
-                      e.target.style.boxShadow = '0 35px 60px -12px rgba(139, 92, 246, 0.4)';
+                      e.target.style.transform = 'translateY(-3px) scale(1.02)';
+                      e.target.style.boxShadow = '0 25px 50px rgba(102, 126, 234, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.transform = 'scale(1)';
-                    e.target.style.boxShadow = '0 25px 50px -12px rgba(139, 92, 246, 0.3)';
+                    if (!loading && bulletsText.trim() && jd.trim()) {
+                      e.target.style.transform = 'translateY(0) scale(1)';
+                      e.target.style.boxShadow = '0 20px 40px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+                    }
                   }}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 text-white font-bold py-4 px-12 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-2xl text-lg"
                 >
@@ -706,9 +823,23 @@ Software Engineer position requiring team leadership, web development experience
                       <span>Add bullets & job description</span>
                     </div>
                   ) : (
-                    <div className="flex items-center space-x-3" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span>🚀</span>
+                    <div className="flex items-center space-x-3" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
+                      <span style={{ fontSize: '1.1rem' }}>🚀</span>
                       <span>Optimize with Gemini AI</span>
+                      {/* Shimmer effect */}
+                      <div 
+                        style={{
+                          position: 'absolute',
+                          top: '-50%',
+                          left: '-100%',
+                          width: '200%',
+                          height: '200%',
+                          background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)',
+                          animation: 'shimmer 3s infinite',
+                          transform: 'skewX(-15deg)',
+                          pointerEvents: 'none'
+                        }}
+                      />
                     </div>
                   )}
                 </button>
