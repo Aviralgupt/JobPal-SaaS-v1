@@ -55,6 +55,9 @@ function App() {
     setError('');
     setResults([]);
     setParsedResume(null);
+    // Show a brief feedback
+    setUploadStatus('✅ Demo data loaded successfully!');
+    setTimeout(() => setUploadStatus(''), 3000);
   };
 
   const handleFileUpload = async (event) => {
@@ -281,19 +284,83 @@ function App() {
 
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6">
-            <span className="text-3xl">🚀</span>
+        <div className="text-center mb-12" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div 
+            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '5rem',
+              height: '5rem',
+              background: 'linear-gradient(to right, #8b5cf6, #ec4899)',
+              borderRadius: '50%',
+              marginBottom: '1.5rem',
+              boxShadow: '0 20px 25px -5px rgba(139, 92, 246, 0.3)',
+              animation: 'float 3s ease-in-out infinite'
+            }}
+          >
+            <span style={{ fontSize: '2rem' }}>🚀</span>
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">
+          <h1 
+            className="text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4"
+            style={{
+              fontSize: '3rem',
+              fontWeight: 'bold',
+              background: 'linear-gradient(to right, #ffffff, #d1d5db)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              marginBottom: '1rem',
+              lineHeight: '1.2'
+            }}
+          >
             JobPal AI
           </h1>
-          <p className="text-xl text-gray-300 mb-6 max-w-2xl mx-auto">
+          <p 
+            className="text-xl text-gray-300 mb-6 max-w-2xl mx-auto"
+            style={{
+              fontSize: '1.25rem',
+              color: '#d1d5db',
+              marginBottom: '1.5rem',
+              maxWidth: '42rem',
+              margin: '0 auto 1.5rem auto',
+              lineHeight: '1.6'
+            }}
+          >
             Transform your resume bullets with AI-powered optimization. Stand out with STAR, XYZ formats, and intelligent matching.
           </p>
-          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-6 py-3">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
-            <span className="text-green-400 font-medium">Powered by Google Gemini AI</span>
+          <div 
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-6 py-3"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: 'rgba(34, 197, 94, 0.2)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid rgba(74, 222, 128, 0.3)',
+              borderRadius: '9999px',
+              padding: '0.75rem 1.5rem'
+            }}
+          >
+            <div 
+              className="w-2 h-2 bg-green-400 rounded-full animate-ping"
+              style={{
+                width: '0.5rem',
+                height: '0.5rem',
+                backgroundColor: '#4ade80',
+                borderRadius: '50%',
+                animation: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite'
+              }}
+            ></div>
+            <span 
+              className="text-green-400 font-medium"
+              style={{
+                color: '#4ade80',
+                fontWeight: '500'
+              }}
+            >
+              Powered by Google Gemini AI
+            </span>
           </div>
         </div>
 
@@ -351,7 +418,17 @@ function App() {
           {activeTab === 'optimize' && (
             <div className="space-y-6 md:space-y-8 animate-fadeIn px-4">
               {/* Resume Bullets Section */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/20">
+              <div 
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/20"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(12px)',
+                  borderRadius: '1rem',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  padding: '2rem',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                }}
+              >
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                   <h2 className="text-xl md:text-2xl font-bold text-white flex items-center">
                     <span className="mr-3">📝</span>
@@ -442,24 +519,84 @@ Software Engineer position requiring team leadership, web development experience
             </div>
 
               {/* Action Button */}
-              <div className="text-center">
+              <div className="text-center" style={{ textAlign: 'center' }}>
                 <button
                   onClick={handleSubmit}
-                  disabled={loading}
+                  disabled={loading || !bulletsText.trim() || !jd.trim()}
+                  style={{
+                    background: loading || !bulletsText.trim() || !jd.trim() 
+                      ? 'linear-gradient(to right, #6b7280, #6b7280)' 
+                      : 'linear-gradient(to right, #8b5cf6, #ec4899)',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    padding: '1rem 3rem',
+                    borderRadius: '1rem',
+                    border: 'none',
+                    fontSize: '1.125rem',
+                    cursor: loading || !bulletsText.trim() || !jd.trim() ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    transform: loading || !bulletsText.trim() || !jd.trim() ? 'scale(1)' : 'scale(1)',
+                    boxShadow: '0 25px 50px -12px rgba(139, 92, 246, 0.3)',
+                    minWidth: '250px',
+                    minHeight: '60px'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!loading && bulletsText.trim() && jd.trim()) {
+                      e.target.style.transform = 'scale(1.05)';
+                      e.target.style.boxShadow = '0 35px 60px -12px rgba(139, 92, 246, 0.4)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'scale(1)';
+                    e.target.style.boxShadow = '0 25px 50px -12px rgba(139, 92, 246, 0.3)';
+                  }}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 text-white font-bold py-4 px-12 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-2xl text-lg"
                 >
                   {loading ? (
-                    <div className="flex items-center space-x-3">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="flex items-center space-x-3" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div 
+                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+                        style={{
+                          width: '1.25rem',
+                          height: '1.25rem',
+                          border: '2px solid white',
+                          borderTopColor: 'transparent',
+                          borderRadius: '50%',
+                          animation: 'spin 1s linear infinite'
+                        }}
+                      ></div>
                       <span>Processing with AI...</span>
                     </div>
+                  ) : !bulletsText.trim() || !jd.trim() ? (
+                    <div className="flex items-center space-x-3" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span>⚠️</span>
+                      <span>Add bullets & job description</span>
+                    </div>
                   ) : (
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       <span>🚀</span>
                       <span>Optimize with Gemini AI</span>
                     </div>
                   )}
                 </button>
+                
+                {/* Helpful hint */}
+                {(!bulletsText.trim() || !jd.trim()) && (
+                  <p 
+                    className="text-gray-400 text-sm mt-4"
+                    style={{
+                      color: '#9ca3af',
+                      fontSize: '0.875rem',
+                      marginTop: '1rem'
+                    }}
+                  >
+                    {!bulletsText.trim() && !jd.trim() 
+                      ? "Add resume bullets and job description to get started"
+                      : !bulletsText.trim() 
+                      ? "Add some resume bullets first"
+                      : "Add a job description to optimize your bullets"}
+                  </p>
+                )}
               </div>
             </div>
           )}
