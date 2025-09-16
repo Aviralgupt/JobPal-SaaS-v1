@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/app_gemini.py",
+      "src": "api/index.py",
       "use": "@vercel/python"
     },
     {
@@ -16,14 +16,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server/app_gemini.py"
+      "dest": "api/index.py"
     },
     {
       "src": "/(.*)",
-      "dest": "client/build/$1"
+      "dest": "client/build/index.html"
     }
-  ],
-  "env": {
-    "GOOGLE_API_KEY": "@google-api-key"
-  }
+  ]
 }

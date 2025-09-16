@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
 import os
-from dotenv import load_dotenv
+import sys
 
-# Load environment variables
-load_dotenv()
+# Add the server directory to the path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'server'))
 
 # Import Gemini-powered routes
 from routes.upload_routes import upload_routes
@@ -45,8 +45,9 @@ def api_health():
     except Exception as e:
         return {"status": "error", "message": str(e)}, 500
 
+# This is required for Vercel
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    app.run()
 
-# For Vercel deployment
-app.wsgi_app = app.wsgi_app
+# Export the app for Vercel
+app = app
