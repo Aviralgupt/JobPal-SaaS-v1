@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import geminiService from './services/geminiService';
 
 function App() {
   const [bulletsText, setBulletsText] = useState('');
@@ -218,8 +219,10 @@ function App() {
         throw new Error('Please enter a job description');
       }
 
-      // Use mock API for demo
-      const improvedBullets = await mockGeminiResponse(bullets, jd, structureType);
+      // Use real Gemini API service
+      setProcessingProgress('🧠 AI analyzing your bullets...');
+      const improvedBullets = await geminiService.optimizeBullets(bullets, jd, structureType);
+      setProcessingProgress('✨ Finalizing optimizations...');
       
       setResults(improvedBullets);
       setProcessingTime(Date.now() - startTime);
@@ -321,7 +324,7 @@ function App() {
         color: '#ffffff'
       }}
     >
-      {/* Modern mesh gradient background */}
+      {/* Ultra-premium animated mesh background */}
       <div 
         style={{
           position: 'absolute',
@@ -330,81 +333,179 @@ function App() {
           right: 0,
           bottom: 0,
           background: `
-            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%),
-            linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)
+            radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(78, 205, 196, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 60% 40%, rgba(255, 154, 158, 0.3) 0%, transparent 50%),
+            linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 30%, #16213e 70%, #0f1419 100%)
           `,
+          backgroundSize: '400% 400%',
+          animation: 'gradientShift 8s ease infinite',
           zIndex: 1
         }}
       />
 
-      {/* Floating particles */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
-        {[...Array(50)].map((_, i) => (
+      {/* Animated grid overlay */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: `
+            linear-gradient(rgba(102, 126, 234, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(102, 126, 234, 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+          animation: 'float 6s ease-in-out infinite',
+          zIndex: 2
+        }}
+      />
+
+      {/* Enhanced floating particles */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 3 }}>
+        {[...Array(80)].map((_, i) => (
           <div
             key={i}
             style={{
               position: 'absolute',
-              width: Math.random() * 4 + 1 + 'px',
-              height: Math.random() * 4 + 1 + 'px',
-              backgroundColor: `hsl(${Math.random() * 60 + 200}, 70%, 70%)`,
+              width: Math.random() * 6 + 2 + 'px',
+              height: Math.random() * 6 + 2 + 'px',
+              background: `radial-gradient(circle, hsl(${Math.random() * 60 + 200}, 80%, 70%) 0%, transparent 70%)`,
               borderRadius: '50%',
               left: Math.random() * 100 + '%',
               top: Math.random() * 100 + '%',
-              animation: `float ${Math.random() * 3 + 2}s ease-in-out infinite`,
-              animationDelay: Math.random() * 2 + 's',
-              opacity: Math.random() * 0.7 + 0.3
+              animation: `float ${Math.random() * 4 + 3}s ease-in-out infinite`,
+              animationDelay: Math.random() * 3 + 's',
+              opacity: Math.random() * 0.8 + 0.2,
+              filter: 'blur(1px)'
             }}
           />
         ))}
       </div>
 
+      {/* Spotlight effects */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
+        <div 
+          style={{
+            position: 'absolute',
+            top: '10%',
+            left: '10%',
+            width: '300px',
+            height: '300px',
+            background: 'radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%)',
+            borderRadius: '50%',
+            animation: 'float 8s ease-in-out infinite',
+            filter: 'blur(40px)'
+          }}
+        />
+        <div 
+          style={{
+            position: 'absolute',
+            top: '60%',
+            right: '15%',
+            width: '250px',
+            height: '250px',
+            background: 'radial-gradient(circle, rgba(240, 147, 251, 0.08) 0%, transparent 70%)',
+            borderRadius: '50%',
+            animation: 'float 6s ease-in-out infinite reverse',
+            filter: 'blur(30px)'
+          }}
+        />
+      </div>
+
       <div style={{ position: 'relative', zIndex: 10, maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
         {/* Modern Header */}
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-          {/* Logo with modern design */}
+          {/* Ultra-premium logo */}
           <div 
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '80px',
-              height: '80px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '24px',
+              width: '100px',
+              height: '100px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+              borderRadius: '32px',
               marginBottom: '2rem',
-              boxShadow: '0 20px 40px rgba(102, 126, 234, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+              boxShadow: `
+                0 30px 60px rgba(102, 126, 234, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2)
+              `,
               animation: 'float 4s ease-in-out infinite',
-              position: 'relative'
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
+            {/* Glossy overlay */}
             <div 
               style={{
                 position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%)',
-                borderRadius: '24px'
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '50%',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)',
+                borderRadius: '32px 32px 0 0'
               }}
             />
-            <span style={{ fontSize: '2.5rem', position: 'relative', zIndex: 1 }}>⚡</span>
+            
+            {/* Animated glow */}
+            <div 
+              style={{
+                position: 'absolute',
+                inset: '-2px',
+                background: 'linear-gradient(45deg, #667eea, #764ba2, #f093fb, #667eea)',
+                borderRadius: '34px',
+                opacity: 0.3,
+                animation: 'gradientShift 3s linear infinite',
+                zIndex: -1
+              }}
+            />
+            
+            <span style={{ fontSize: '3rem', position: 'relative', zIndex: 1, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>⚡</span>
           </div>
 
-          {/* Main title with enhanced styling */}
+          {/* Ultra-premium title */}
           <h1 
             style={{
-              fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
-              fontWeight: '800',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+              fontSize: 'clamp(3rem, 8vw, 5rem)',
+              fontWeight: '900',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 60%, #4ecdc4 100%)',
+              backgroundSize: '300% 300%',
+              animation: 'gradientShift 6s ease infinite',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
               marginBottom: '1.5rem',
-              lineHeight: '1.1',
-              letterSpacing: '-0.02em'
+              lineHeight: '1.05',
+              letterSpacing: '-0.03em',
+              filter: 'drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3))',
+              position: 'relative'
             }}
           >
             JobPal AI
+            {/* Text glow effect */}
+            <div 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 60%, #4ecdc4 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                filter: 'blur(20px)',
+                opacity: 0.5,
+                zIndex: -1
+              }}
+            >
+              JobPal AI
+            </div>
           </h1>
 
           {/* Subtitle with better typography */}
@@ -533,28 +634,67 @@ function App() {
           {/* Optimize Tab */}
           {activeTab === 'optimize' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animation: 'fadeIn 0.6s ease-out' }}>
-              {/* Resume Bullets Section */}
+              {/* Ultra-premium Resume Bullets Section */}
               <div 
                 style={{
-                  background: 'rgba(255, 255, 255, 0.06)',
-                  backdropFilter: 'blur(20px)',
-                  borderRadius: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  padding: '2rem',
-                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  background: `
+                    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%),
+                    radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(240, 147, 251, 0.08) 0%, transparent 50%)
+                  `,
+                  backdropFilter: 'blur(25px) saturate(180%)',
+                  borderRadius: '28px',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  padding: '2.5rem',
+                  boxShadow: `
+                    0 25px 50px rgba(0, 0, 0, 0.15),
+                    0 0 0 1px rgba(255, 255, 255, 0.05),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                  `,
                   position: 'relative',
                   overflow: 'hidden'
                 }}
               >
-                {/* Card glow effect */}
+                {/* Enhanced card glow effects */}
                 <div 
                   style={{
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: '1px',
-                    background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent)'
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.6), rgba(240, 147, 251, 0.6), transparent)',
+                    borderRadius: '28px 28px 0 0'
+                  }}
+                />
+                
+                {/* Floating light orbs */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: '10%',
+                    right: '10%',
+                    width: '100px',
+                    height: '100px',
+                    background: 'radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%)',
+                    borderRadius: '50%',
+                    animation: 'float 4s ease-in-out infinite',
+                    filter: 'blur(20px)'
+                  }}
+                />
+                
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: '20%',
+                    left: '15%',
+                    width: '80px',
+                    height: '80px',
+                    background: 'radial-gradient(circle, rgba(240, 147, 251, 0.08) 0%, transparent 70%)',
+                    borderRadius: '50%',
+                    animation: 'float 6s ease-in-out infinite reverse',
+                    filter: 'blur(15px)'
                   }}
                 />
               
