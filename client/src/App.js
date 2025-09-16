@@ -262,7 +262,14 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom right, #0f172a, #581c87, #0f172a)',
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+      }}
+    >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -inset-10 opacity-50">
@@ -292,14 +299,23 @@ function App() {
 
         {/* Navigation Tabs */}
         <div className="flex justify-center mb-8 px-4">
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20 w-full max-w-md">
+          <div 
+            className="bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/20 w-full max-w-md"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(12px)',
+              borderRadius: '1rem',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '0.25rem'
+            }}
+          >
             <div className="grid grid-cols-3 gap-1">
               {[
                 { id: 'optimize', label: 'Optimize', icon: '⚡' },
                 { id: 'upload', label: 'Upload', icon: '📄' },
                 { id: 'results', label: 'Results', icon: '✨' }
               ].map((tab) => (
-              <button
+                <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-3 py-3 rounded-xl font-medium transition-all duration-300 text-center ${
@@ -307,6 +323,17 @@ function App() {
                       ? 'bg-white text-purple-900 shadow-lg transform scale-105'
                       : 'text-white/70 hover:text-white hover:bg-white/5'
                   }`}
+                  style={{
+                    padding: '0.75rem',
+                    borderRadius: '0.75rem',
+                    fontWeight: '500',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'center',
+                    backgroundColor: activeTab === tab.id ? 'white' : 'transparent',
+                    color: activeTab === tab.id ? '#581c87' : 'rgba(255, 255, 255, 0.7)',
+                    transform: activeTab === tab.id ? 'scale(1.05)' : 'scale(1)',
+                    boxShadow: activeTab === tab.id ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none'
+                  }}
                 >
                   <div className="flex flex-col items-center space-y-1">
                     <span className="text-lg">{tab.icon}</span>
