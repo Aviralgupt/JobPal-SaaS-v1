@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import { parseResumeFile } from './utils/resumeParser';
 
 function App() {
   const [bulletsText, setBulletsText] = useState('');
@@ -11,6 +12,8 @@ function App() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('');
   const [parsedResume, setParsedResume] = useState(null);
+  const [resumeExperiences, setResumeExperiences] = useState([]);
+  const [selectedExperiences, setSelectedExperiences] = useState([]);
 
   // Load demo data on start
   useEffect(() => {
@@ -27,95 +30,20 @@ function App() {
     if (!file) return;
 
     setUploadedFile(file);
-    setUploadStatus('📤 Uploading and parsing resume...');
+    setUploadStatus('📤 Parsing resume file...');
     setError('');
     setParsedResume(null);
+    setResumeExperiences([]);
 
     try {
-      // Simulate file processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // For text files, try to read the actual content
-      if (file.type === 'text/plain') {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const content = e.target.result;
-          // Extract bullet-like lines from the text
-          const lines = content.split('\n');
-          const bullets = lines
-            .filter(line => {
-              const trimmed = line.trim();
-              return trimmed.length > 10 && 
-                     (trimmed.startsWith('•') || 
-                      trimmed.startsWith('-') || 
-                      trimmed.startsWith('*') ||
-                      trimmed.match(/^\d+\./) ||
-                      (trimmed.includes('develop') || trimmed.includes('implement') || 
-                       trimmed.includes('manage') || trimmed.includes('create') ||
-                       trimmed.includes('lead') || trimmed.includes('build')));
-            })
-            .map(line => line.trim())
-            .slice(0, 15); // Limit to 15 bullets max
-
-          if (bullets.length > 0) {
-            setBulletsText(bullets.join('\n'));
-            setUploadStatus(`✅ Resume parsed successfully! Found ${bullets.length} relevant bullets.`);
-          } else {
-            // Fallback to mock data if no bullets found
-            setBulletsText(`• Software development experience
-• Project management and collaboration
-• Technical problem solving
-• Code review and mentoring
-• System architecture design`);
-            setUploadStatus('✅ Resume uploaded! Added sample bullets - please edit as needed.');
-          }
-        };
-        reader.readAsText(file);
-      } else {
-        // For PDF/DOCX files, use intelligent mock data based on filename
-        const fileName = file.name.toLowerCase();
-        let mockBullets = [];
-        
-        if (fileName.includes('senior') || fileName.includes('lead')) {
-          mockBullets = [
-            "Led development team of 5+ engineers in agile environment",
-            "Architected scalable microservices handling 10M+ requests daily", 
-            "Mentored junior developers and conducted technical code reviews",
-            "Implemented CI/CD pipelines reducing deployment time by 70%",
-            "Collaborated with product managers to deliver user-focused features"
-          ];
-        } else if (fileName.includes('full') || fileName.includes('stack')) {
-          mockBullets = [
-            "Developed responsive web applications using React and Node.js",
-            "Built RESTful APIs with robust error handling and validation",
-            "Integrated third-party services and payment processing systems",
-            "Optimized database queries improving application performance",
-            "Collaborated with design team to implement pixel-perfect UIs"
-          ];
-        } else if (fileName.includes('backend') || fileName.includes('api')) {
-          mockBullets = [
-            "Designed and implemented scalable backend APIs",
-            "Optimized database performance and query efficiency", 
-            "Implemented secure authentication and authorization systems",
-            "Built microservices architecture for distributed systems",
-            "Maintained high availability systems with 99.9% uptime"
-          ];
-        } else {
-          // Generic tech resume bullets
-          mockBullets = [
-            "Developed and maintained production applications",
-            "Collaborated with cross-functional teams on feature delivery",
-            "Implemented automated testing and deployment processes", 
-            "Optimized system performance and resolved technical issues",
-            "Participated in code reviews and technical design discussions"
-          ];
-        }
-
-        setBulletsText(mockBullets.map(bullet => `• ${bullet}`).join('\n'));
-        setUploadStatus(`✅ Resume parsed successfully! Found ${mockBullets.length} bullets. Please review and edit as needed.`);
-      }
-
-      setParsedResume({ fileName: file.name, fileSize: file.size });
+      // Use the new resume parser
+      const parsedData = await parseResumeFile(file);
+      
+      setParsedResume(parsedData.personalInfo);
+      setResumeExperiences(parsedData.experiences);
+      setSelectedExperiences(parsedData.experiences.map((_, index) => index));
+      
+      setUploadStatus(`✅ Resume parsed successfully! Found ${parsedData.experiences.length} experience sections with ${parsedData.experiences.reduce((total, exp) => total + exp.bullets.length, 0)} total bullets.`);
       
     } catch (error) {
       console.error('Upload error:', error);
@@ -124,20 +52,62 @@ function App() {
     }
   };
 
+  const toggleExperienceSelection = (index) => {
+    setSelectedExperiences(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
+  };
+
+  const updateExperienceBullets = (expIndex, bulletIndex, newBullet) => {
+    setResumeExperiences(prev => prev.map((exp, i) => 
+      i === expIndex 
+        ? { ...exp, bullets: exp.bullets.map((bullet, j) => j === bulletIndex ? newBullet : bullet) }
+        : exp
+    ));
+  };
+
+  const addBulletToExperience = (expIndex) => {
+    setResumeExperiences(prev => prev.map((exp, i) => 
+      i === expIndex 
+        ? { ...exp, bullets: [...exp.bullets, "New accomplishment..."] }
+        : exp
+    ));
+  };
+
+  const removeBulletFromExperience = (expIndex, bulletIndex) => {
+    setResumeExperiences(prev => prev.map((exp, i) => 
+      i === expIndex 
+        ? { ...exp, bullets: exp.bullets.filter((_, j) => j !== bulletIndex) }
+        : exp
+    ));
+  };
+
+  const useSelectedExperiences = () => {
+    const selectedBullets = selectedExperiences
+      .map(index => resumeExperiences[index])
+      .flatMap(exp => exp.bullets)
+      .map(bullet => `• ${bullet}`);
+    
+    setBulletsText(selectedBullets.join('\n'));
+    setActiveTab('optimize');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setResults([]);
     setActiveTab('results');
-
+    
     try {
       const bullets = bulletsText.split('\n').filter(bullet => bullet.trim() !== '');
       
       if (bullets.length === 0) {
         throw new Error('Please enter some resume bullets');
       }
-
+      
       // Simulate processing
       await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -203,7 +173,7 @@ function App() {
       padding: '2rem',
       fontFamily: 'Inter, sans-serif'
     }}>
-      {/* Header */}
+        {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <h1 style={{ 
           fontSize: '3rem', 
@@ -212,7 +182,7 @@ function App() {
           fontWeight: '800'
         }}>
           ⚡ JobPal AI
-        </h1>
+          </h1>
         <p style={{ 
           fontSize: '1.2rem', 
           color: 'rgba(255,255,255,0.9)',
@@ -230,7 +200,7 @@ function App() {
         }}>
           🤖 Powered by Google Gemini AI
         </div>
-      </div>
+          </div>
 
       {/* Navigation */}
       <div style={{ 
@@ -381,58 +351,60 @@ function App() {
         {activeTab === 'upload' && (
           <div>
             <h2 style={{ color: 'white', marginBottom: '2rem', fontSize: '1.5rem', textAlign: 'center' }}>
-              📤 Upload Your Resume
+              📤 Upload & Parse Resume
             </h2>
             
             {/* Upload Area */}
-            <div style={{
-              border: '2px dashed rgba(255,255,255,0.3)',
-              borderRadius: '12px',
-              padding: '3rem 2rem',
-              textAlign: 'center',
-              marginBottom: '2rem',
-              background: 'rgba(255,255,255,0.05)'
-            }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📄</div>
-              <h3 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.2rem' }}>
-                Drop your PDF, DOCX, or text file
-              </h3>
-              <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '2rem' }}>
-                We'll extract and analyze your bullets automatically
-              </p>
-              
-              <input
-                type="file"
-                accept=".pdf,.docx,.doc,.txt"
-                onChange={handleFileUpload}
-                style={{ display: 'none' }}
-                id="resume-upload"
-              />
-              
-              <label
-                htmlFor="resume-upload"
-                style={{
-                  background: '#10b981',
-                  color: 'white',
-                  padding: '1rem 2rem',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  display: 'inline-block',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.background = '#059669'}
-                onMouseLeave={(e) => e.target.style.background = '#10b981'}
-              >
-                Choose File
-              </label>
-              
-              {uploadedFile && (
-                <div style={{ marginTop: '1rem', color: 'rgba(255,255,255,0.9)' }}>
-                  📎 {uploadedFile.name}
-                </div>
-              )}
-            </div>
+            {!parsedResume && (
+              <div style={{
+                border: '2px dashed rgba(255,255,255,0.3)',
+                borderRadius: '12px',
+                padding: '3rem 2rem',
+                textAlign: 'center',
+                marginBottom: '2rem',
+                background: 'rgba(255,255,255,0.05)'
+              }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📄</div>
+                <h3 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.2rem' }}>
+                  Upload your resume file
+                </h3>
+                <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '2rem' }}>
+                  We'll parse it and extract your experience sections
+                </p>
+                
+                <input
+                  type="file"
+                  accept=".pdf,.docx,.doc,.txt"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                  id="resume-upload"
+                />
+                
+                <label
+                  htmlFor="resume-upload"
+                  style={{
+                    background: '#10b981',
+                    color: 'white',
+                    padding: '1rem 2rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    display: 'inline-block',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = '#059669'}
+                  onMouseLeave={(e) => e.target.style.background = '#10b981'}
+                >
+                  Choose File
+                </label>
+                
+                {uploadedFile && (
+                  <div style={{ marginTop: '1rem', color: 'rgba(255,255,255,0.9)' }}>
+                    📎 {uploadedFile.name}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Upload Status */}
             {uploadStatus && (
@@ -459,69 +431,155 @@ function App() {
               </div>
             )}
 
-            {/* AI Processing Steps */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📤</div>
-                <h4 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1rem' }}>Upload Resume</h4>
-                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0 }}>
-                  Drop your PDF, DOCX, or text file
-                </p>
-              </div>
-              
-              <div style={{
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🤖</div>
-                <h4 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1rem' }}>AI Processing</h4>
-                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0 }}>
-                  We extract and analyze your bullets
-                </p>
-              </div>
-              
-              <div style={{
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>✨</div>
-                <h4 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1rem' }}>Get Results</h4>
-                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0 }}>
-                  Receive optimized, job-matched bullets
-                </p>
-              </div>
-            </div>
+            {/* Parsed Resume Display */}
+            {parsedResume && resumeExperiences.length > 0 && (
+              <div>
+                {/* Personal Info */}
+                <div style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '1.5rem',
+                  marginBottom: '2rem'
+                }}>
+                  <h3 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1.2rem' }}>
+                    👤 {parsedResume.name}
+                  </h3>
+                  <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0 }}>
+                    {parsedResume.email} | {parsedResume.phone}
+                  </p>
+                </div>
 
-            {/* Continue Button */}
-            {parsedResume && (
-              <div style={{ textAlign: 'center' }}>
-                <button
-                  onClick={() => setActiveTab('optimize')}
-                  style={{
-                    background: '#667eea',
-                    color: 'white',
-                    padding: '1rem 2rem',
+                {/* Experience Sections */}
+                <h3 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.2rem' }}>
+                  💼 Experience Sections - Select what to optimize:
+                </h3>
+                
+                {resumeExperiences.map((experience, expIndex) => (
+                  <div key={expIndex} style={{
+                    background: 'rgba(255,255,255,0.05)',
                     borderRadius: '12px',
-                    border: 'none',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = '#5a6fd8'}
-                  onMouseLeave={(e) => e.target.style.background = '#667eea'}
-                >
-                  Continue to Optimize →
-                </button>
+                    padding: '1.5rem',
+                    marginBottom: '1rem',
+                    border: selectedExperiences.includes(expIndex) ? '2px solid #10b981' : '1px solid rgba(255,255,255,0.1)'
+                  }}>
+                    {/* Experience Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <div>
+                        <h4 style={{ color: 'white', margin: 0, fontSize: '1.1rem' }}>
+                          {experience.title}
+                        </h4>
+                        <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0.25rem 0 0 0', fontSize: '0.9rem' }}>
+                          {experience.company} | {experience.dates}
+                        </p>
+                      </div>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedExperiences.includes(expIndex)}
+                          onChange={() => toggleExperienceSelection(expIndex)}
+                          style={{ width: '18px', height: '18px' }}
+                        />
+                        <span style={{ color: 'white', fontSize: '0.9rem' }}>
+                          {selectedExperiences.includes(expIndex) ? 'Selected' : 'Select'}
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Bullets */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      {experience.bullets.map((bullet, bulletIndex) => (
+                        <div key={bulletIndex} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ color: '#10b981', minWidth: '10px' }}>•</span>
+                          <input
+                            type="text"
+                            value={bullet}
+                            onChange={(e) => updateExperienceBullets(expIndex, bulletIndex, e.target.value)}
+                            style={{
+                              flex: 1,
+                              background: 'rgba(255,255,255,0.1)',
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              borderRadius: '6px',
+                              padding: '0.5rem',
+                              color: 'white',
+                              fontSize: '0.9rem'
+                            }}
+                          />
+                          <button
+                            onClick={() => removeBulletFromExperience(expIndex, bulletIndex)}
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.2)',
+                              border: '1px solid rgba(239, 68, 68, 0.5)',
+                              borderRadius: '4px',
+                              padding: '0.25rem 0.5rem',
+                              color: '#f87171',
+                              cursor: 'pointer',
+                              fontSize: '0.8rem'
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => addBulletToExperience(expIndex)}
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.2)',
+                          border: '1px solid rgba(16, 185, 129, 0.5)',
+                          borderRadius: '6px',
+                          padding: '0.5rem',
+                          color: '#10b981',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem',
+                          marginTop: '0.5rem'
+                        }}
+                      >
+                        + Add Bullet
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2rem' }}>
+                  <button
+                    onClick={useSelectedExperiences}
+                    disabled={selectedExperiences.length === 0}
+                    style={{
+                      background: selectedExperiences.length > 0 ? '#667eea' : '#6b7280',
+                      color: 'white',
+                      padding: '1rem 2rem',
+                      borderRadius: '12px',
+                      border: 'none',
+                      fontSize: '1.1rem',
+                      fontWeight: '600',
+                      cursor: selectedExperiences.length > 0 ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    Use Selected ({selectedExperiences.length}) →
+                  </button>
+                  <button
+                    onClick={() => {
+                      setParsedResume(null);
+                      setResumeExperiences([]);
+                      setUploadedFile(null);
+                      setUploadStatus('');
+                    }}
+                    style={{
+                      background: 'rgba(255,255,255,0.1)',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      color: 'white',
+                      padding: '1rem 2rem',
+                      borderRadius: '12px',
+                      fontSize: '1.1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    Upload New File
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -542,10 +600,10 @@ function App() {
                 <h3 style={{ color: 'white', fontSize: '1.5rem' }}>
                   AI is optimizing your bullets...
                 </h3>
-              </div>
-            )}
+                </div>
+              )}
 
-            {error && (
+          {error && (
               <div style={{
                 background: 'rgba(239, 68, 68, 0.2)',
                 border: '1px solid rgba(239, 68, 68, 0.5)',
@@ -555,8 +613,8 @@ function App() {
               }}>
                 <h3 style={{ color: '#f87171', marginBottom: '0.5rem' }}>❌ Error</h3>
                 <p style={{ color: '#fca5a5' }}>{error}</p>
-              </div>
-            )}
+            </div>
+          )}
 
             {results.length > 0 && !loading && (
               <div>
@@ -568,7 +626,7 @@ function App() {
                 }}>
                   <h2 style={{ color: 'white', fontSize: '1.5rem', margin: 0 }}>
                     ✨ Optimized Results
-                  </h2>
+                </h2>
                   <button
                     onClick={copyAllResults}
                     style={{
@@ -583,10 +641,10 @@ function App() {
                   >
                     📋 Copy All
                   </button>
-                </div>
-
+              </div>
+              
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {results.map((result, index) => (
+                {results.map((result, index) => (
                     <div
                       key={index}
                       style={{
@@ -612,8 +670,8 @@ function App() {
                               fontSize: '0.8rem',
                               fontWeight: '600'
                             }}>
-                              Bullet {index + 1}
-                            </span>
+                          Bullet {index + 1}
+                        </span>
                           </div>
                           <p style={{ 
                             color: 'white', 
@@ -623,9 +681,9 @@ function App() {
                           }}>
                             {result}
                           </p>
-                        </div>
-                        <button
-                          onClick={() => copyToClipboard(result)}
+                      </div>
+                      <button
+                        onClick={() => copyToClipboard(result)}
                           style={{
                             background: 'rgba(255,255,255,0.1)',
                             border: '1px solid rgba(255,255,255,0.3)',
@@ -635,14 +693,14 @@ function App() {
                             cursor: 'pointer',
                             fontSize: '1rem'
                           }}
-                          title="Copy to clipboard"
-                        >
-                          📋
-                        </button>
-                      </div>
+                        title="Copy to clipboard"
+                      >
+                        📋
+                      </button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
+              </div>
               </div>
             )}
 
@@ -671,11 +729,11 @@ function App() {
                 </button>
               </div>
             )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
 
-      {/* Footer */}
+        {/* Footer */}
       <div style={{ 
         textAlign: 'center', 
         marginTop: '3rem',
