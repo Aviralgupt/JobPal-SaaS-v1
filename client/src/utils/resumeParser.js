@@ -39,97 +39,54 @@ const simulateFileExtraction = async (file) => {
   // Simulate processing time
   await new Promise(resolve => setTimeout(resolve, 1500));
   
-  const fileName = file.name.toLowerCase();
-  
-  // Create realistic resume content based on filename and common patterns
-  let mockContent = `
-John Smith
-Software Engineer
-Email: john.smith@email.com
-Phone: (555) 123-4567
-LinkedIn: linkedin.com/in/johnsmith
+  // For now, return a generic message asking for text file
+  // In a real implementation, you'd use libraries like pdf-parse or mammoth
+  return `
+RESUME PARSING NOTICE
 
-PROFESSIONAL SUMMARY
-Experienced software engineer with 5+ years of expertise in full-stack development, 
-system architecture, and team leadership. Proven track record of delivering scalable 
-solutions and driving technical excellence.
+This is a demo version. For full PDF/DOCX parsing, please:
 
-EXPERIENCE
+1. Copy your resume content to a .txt file, or
+2. Paste your resume text directly in the Optimize tab
 
-Senior Software Engineer
-TechCorp Inc. | 2022 - Present
-• Led development of microservices architecture serving 2M+ daily active users
-• Implemented CI/CD pipelines reducing deployment time from 2 hours to 15 minutes
-• Mentored 3 junior developers and conducted weekly code review sessions
-• Optimized database queries resulting in 40% improvement in API response times
-• Collaborated with product team to deliver 15+ customer-facing features
+Your actual resume content will be parsed and displayed here.
 
-Full Stack Developer  
-StartupXYZ | 2020 - 2022
-• Built responsive web applications using React, Node.js, and PostgreSQL
-• Developed RESTful APIs handling 100K+ requests per day
-• Integrated payment processing with Stripe and PayPal APIs
-• Implemented real-time chat functionality using WebSocket technology
-• Reduced application load time by 60% through performance optimization
+To get started:
+- Save your resume as a .txt file with your real information
+- Upload the .txt file for proper parsing
+- Or manually enter your bullets in the Optimize tab
 
-Software Developer
-InnovateLabs | 2019 - 2020
-• Developed mobile applications using React Native for iOS and Android
-• Created automated testing suites increasing code coverage to 90%
-• Participated in agile development process with 2-week sprint cycles
-• Collaborated with UI/UX designers to implement pixel-perfect interfaces
-• Fixed critical bugs and improved application stability
-
-EDUCATION
-Bachelor of Science in Computer Science
-University of Technology | 2015 - 2019
-
-SKILLS
-Programming Languages: JavaScript, Python, Java, TypeScript
-Frameworks: React, Node.js, Express, Django, Spring Boot
-Databases: PostgreSQL, MongoDB, Redis, MySQL
-Tools: Git, Docker, Kubernetes, AWS, Jenkins
+This ensures we work with YOUR actual resume data, not sample data.
 `;
-
-  // Customize based on filename hints
-  if (fileName.includes('senior') || fileName.includes('lead')) {
-    mockContent = mockContent.replace('3 junior developers', '5 junior developers');
-    mockContent = mockContent.replace('15+ customer-facing features', '25+ customer-facing features');
-  }
-  
-  if (fileName.includes('frontend') || fileName.includes('react')) {
-    mockContent += `
-ADDITIONAL EXPERIENCE
-
-Frontend Developer
-WebSolutions Co. | 2018 - 2019
-• Developed modern web interfaces using React and Vue.js
-• Implemented responsive designs for mobile and desktop platforms
-• Optimized frontend performance achieving 95+ Lighthouse scores
-• Integrated with RESTful APIs and GraphQL endpoints
-• Collaborated with design team using Figma and Adobe XD
-`;
-  }
-  
-  if (fileName.includes('backend') || fileName.includes('api')) {
-    mockContent += `
-ADDITIONAL EXPERIENCE
-
-Backend Developer
-DataFlow Systems | 2018 - 2019
-• Designed and implemented scalable REST and GraphQL APIs
-• Built microservices architecture using Docker and Kubernetes
-• Implemented OAuth 2.0 authentication and JWT token management
-• Optimized database schemas and queries for high-performance applications
-• Maintained 99.9% uptime for production systems serving 500K+ users
-`;
-  }
-  
-  return mockContent;
 };
 
 const extractResumeData = (content, fileName) => {
   const lines = content.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+  
+  // Check if this is the notice message
+  if (content.includes('RESUME PARSING NOTICE')) {
+    return {
+      personalInfo: {
+        name: "Your Resume",
+        email: "",
+        phone: "",
+        fileName: fileName
+      },
+      experiences: [
+        {
+          title: "Please Upload Your Real Resume",
+          company: "As a .txt file for proper parsing",
+          dates: "Or enter manually below",
+          bullets: [
+            "Copy your resume content to a .txt file",
+            "Upload the .txt file for automatic parsing",
+            "Or manually enter your bullets in the Optimize tab",
+            "This ensures we work with YOUR actual data"
+          ]
+        }
+      ]
+    };
+  }
   
   // Extract basic info
   const nameMatch = lines.find(line => 
@@ -217,29 +174,18 @@ const extractResumeData = (content, fileName) => {
     experiences.push(currentExperience);
   }
   
-  // If no experiences found, create sample ones
+  // If no experiences found, show instructions
   if (experiences.length === 0) {
     experiences.push(
       {
-        title: "Software Engineer",
-        company: "Tech Company",
-        dates: "2022 - Present",
+        title: "No Experience Found",
+        company: "Please check your resume format",
+        dates: "Or try uploading as .txt file",
         bullets: [
-          "Developed web applications using modern frameworks",
-          "Collaborated with cross-functional teams on feature delivery",
-          "Implemented automated testing and deployment processes",
-          "Optimized application performance and resolved technical issues"
-        ]
-      },
-      {
-        title: "Full Stack Developer",
-        company: "Previous Company",
-        dates: "2020 - 2022",
-        bullets: [
-          "Built responsive user interfaces using React and TypeScript",
-          "Designed and implemented RESTful APIs",
-          "Integrated third-party services and payment systems",
-          "Participated in code reviews and technical design discussions"
+          "Make sure your resume has clear experience sections",
+          "Use bullet points (• or -) for accomplishments",
+          "Include job titles, companies, and dates",
+          "Try saving as a .txt file for better parsing"
         ]
       }
     );
@@ -247,7 +193,7 @@ const extractResumeData = (content, fileName) => {
   
   return {
     personalInfo: {
-      name: nameMatch || "Resume Holder",
+      name: nameMatch || "Your Resume",
       email: emailMatch || "",
       phone: phoneMatch || "",
       fileName: fileName
