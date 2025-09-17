@@ -8,6 +8,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('optimize');
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState('');
+  const [parsedResume, setParsedResume] = useState(null);
 
   // Load demo data on start
   useEffect(() => {
@@ -18,6 +21,67 @@ function App() {
 • Optimized database performance for better scalability`);
     setJd("Software Engineer position requiring team leadership, web development experience, and system implementation skills. Looking for someone who can manage projects and drive technical improvements.");
   }, []);
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setUploadedFile(file);
+    setUploadStatus('📤 Uploading and parsing resume...');
+    setError('');
+    setParsedResume(null);
+
+    try {
+      // Simulate file processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Mock resume parsing based on file type
+      const mockResumeData = {
+        name: "John Doe",
+        email: "john.doe@email.com",
+        phone: "+1 (555) 123-4567",
+        summary: "Experienced software engineer with 5+ years in full-stack development",
+        experience: [
+          {
+            company: "Tech Corp",
+            title: "Senior Software Engineer",
+            dates: "2021-2024",
+            bullets: [
+              "Led development of microservices architecture serving 1M+ users",
+              "Implemented CI/CD pipelines reducing deployment time by 60%",
+              "Mentored junior developers and conducted code reviews",
+              "Optimized database queries improving performance by 40%",
+              "Built responsive web applications using React and Node.js"
+            ]
+          },
+          {
+            company: "StartupXYZ",
+            title: "Full Stack Developer", 
+            dates: "2019-2021",
+            bullets: [
+              "Developed real-time inventory management system",
+              "Integrated payment processing with Stripe API",
+              "Collaborated with design team to implement pixel-perfect UIs",
+              "Implemented automated email marketing campaigns"
+            ]
+          }
+        ]
+      };
+
+      setParsedResume(mockResumeData);
+      
+      // Auto-populate bullets from parsed resume
+      const allBullets = mockResumeData.experience.flatMap(exp => exp.bullets);
+      setBulletsText(allBullets.map(bullet => `• ${bullet}`).join('\n'));
+      
+      setUploadStatus('✅ Resume parsed successfully! Found ' + allBullets.length + ' bullets across ' + mockResumeData.experience.length + ' sections.');
+      
+    } catch (error) {
+      console.error('Upload error:', error);
+      setError(`Upload failed: ${error.message}`);
+      setUploadStatus('❌ Upload failed');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,23 +177,27 @@ function App() {
           borderRadius: '12px',
           padding: '4px'
         }}>
-          {['optimize', 'results'].map((tab) => (
+          {[
+            { id: 'optimize', label: '⚡ Optimize', icon: '⚡' },
+            { id: 'upload', label: '📤 Upload', icon: '📤' },
+            { id: 'results', label: '✨ Results', icon: '✨' }
+          ].map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
               style={{
-                padding: '12px 24px',
+                padding: '12px 20px',
                 borderRadius: '8px',
                 border: 'none',
-                background: activeTab === tab ? 'white' : 'transparent',
-                color: activeTab === tab ? '#667eea' : 'white',
+                background: activeTab === tab.id ? 'white' : 'transparent',
+                color: activeTab === tab.id ? '#667eea' : 'white',
                 fontWeight: '600',
                 cursor: 'pointer',
-                textTransform: 'capitalize',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                fontSize: '0.9rem'
               }}
             >
-              {tab === 'optimize' ? '⚡ Optimize' : '✨ Results'}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -149,9 +217,35 @@ function App() {
         {/* Optimize Tab */}
         {activeTab === 'optimize' && (
           <div>
-            <h2 style={{ color: 'white', marginBottom: '1.5rem', fontSize: '1.5rem' }}>
-              📝 Resume Bullets
-            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <h2 style={{ color: 'white', fontSize: '1.5rem', margin: 0 }}>
+                📝 Resume Bullets
+              </h2>
+              <button
+                onClick={() => setActiveTab('upload')}
+                style={{
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  border: '1px solid rgba(16, 185, 129, 0.5)',
+                  color: '#10b981',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'rgba(16, 185, 129, 0.3)';
+                  e.target.style.borderColor = 'rgba(16, 185, 129, 0.7)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(16, 185, 129, 0.2)';
+                  e.target.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                }}
+              >
+                📤 Or Upload Resume
+              </button>
+            </div>
             
             <textarea
               value={bulletsText}
@@ -213,6 +307,156 @@ function App() {
                 {loading ? '🔄 Processing...' : '🚀 Optimize Bullets'}
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Upload Tab */}
+        {activeTab === 'upload' && (
+          <div>
+            <h2 style={{ color: 'white', marginBottom: '2rem', fontSize: '1.5rem', textAlign: 'center' }}>
+              📤 Upload Your Resume
+            </h2>
+            
+            {/* Upload Area */}
+            <div style={{
+              border: '2px dashed rgba(255,255,255,0.3)',
+              borderRadius: '12px',
+              padding: '3rem 2rem',
+              textAlign: 'center',
+              marginBottom: '2rem',
+              background: 'rgba(255,255,255,0.05)'
+            }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📄</div>
+              <h3 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.2rem' }}>
+                Drop your PDF, DOCX, or text file
+              </h3>
+              <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '2rem' }}>
+                We'll extract and analyze your bullets automatically
+              </p>
+              
+              <input
+                type="file"
+                accept=".pdf,.docx,.doc,.txt"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+                id="resume-upload"
+              />
+              
+              <label
+                htmlFor="resume-upload"
+                style={{
+                  background: '#10b981',
+                  color: 'white',
+                  padding: '1rem 2rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  display: 'inline-block',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.background = '#059669'}
+                onMouseLeave={(e) => e.target.style.background = '#10b981'}
+              >
+                Choose File
+              </label>
+              
+              {uploadedFile && (
+                <div style={{ marginTop: '1rem', color: 'rgba(255,255,255,0.9)' }}>
+                  📎 {uploadedFile.name}
+                </div>
+              )}
+            </div>
+
+            {/* Upload Status */}
+            {uploadStatus && (
+              <div style={{
+                background: uploadStatus.includes('✅') ? 'rgba(16, 185, 129, 0.2)' : 
+                           uploadStatus.includes('❌') ? 'rgba(239, 68, 68, 0.2)' :
+                           'rgba(59, 130, 246, 0.2)',
+                border: `1px solid ${uploadStatus.includes('✅') ? 'rgba(16, 185, 129, 0.5)' : 
+                                    uploadStatus.includes('❌') ? 'rgba(239, 68, 68, 0.5)' :
+                                    'rgba(59, 130, 246, 0.5)'}`,
+                borderRadius: '12px',
+                padding: '1rem',
+                marginBottom: '2rem',
+                textAlign: 'center'
+              }}>
+                <p style={{ 
+                  color: uploadStatus.includes('✅') ? '#10b981' : 
+                         uploadStatus.includes('❌') ? '#f87171' : '#60a5fa',
+                  margin: 0,
+                  fontWeight: '500'
+                }}>
+                  {uploadStatus}
+                </p>
+              </div>
+            )}
+
+            {/* AI Processing Steps */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+              <div style={{
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📤</div>
+                <h4 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1rem' }}>Upload Resume</h4>
+                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0 }}>
+                  Drop your PDF, DOCX, or text file
+                </p>
+              </div>
+              
+              <div style={{
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🤖</div>
+                <h4 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1rem' }}>AI Processing</h4>
+                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0 }}>
+                  We extract and analyze your bullets
+                </p>
+              </div>
+              
+              <div style={{
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>✨</div>
+                <h4 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1rem' }}>Get Results</h4>
+                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0 }}>
+                  Receive optimized, job-matched bullets
+                </p>
+              </div>
+            </div>
+
+            {/* Continue Button */}
+            {parsedResume && (
+              <div style={{ textAlign: 'center' }}>
+                <button
+                  onClick={() => setActiveTab('optimize')}
+                  style={{
+                    background: '#667eea',
+                    color: 'white',
+                    padding: '1rem 2rem',
+                    borderRadius: '12px',
+                    border: 'none',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = '#5a6fd8'}
+                  onMouseLeave={(e) => e.target.style.background = '#667eea'}
+                >
+                  Continue to Optimize →
+                </button>
+              </div>
+            )}
           </div>
         )}
 
